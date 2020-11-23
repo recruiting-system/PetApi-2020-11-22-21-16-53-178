@@ -14,7 +14,7 @@ using System.Linq;
 using System.Net;
 namespace PetApiTest
 {
-    public class UnitTest1
+    public class PetApiTest
     {
         [Fact]
         public async Task Should_Add_Pet_When_Add_Pet()
