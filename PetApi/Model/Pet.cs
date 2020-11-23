@@ -32,18 +32,6 @@ namespace PetApi.Model
         public string Color { get; set; }
         public double Price { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            if (this.GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            var pet = obj as Pet;
-
-            return Name == pet.Name && Type == pet.Type && Color == pet.Color && Price == pet.Price;
-        }
-
         public bool Equals(Pet pet)
         {
             if (pet.GetType() != this.GetType())

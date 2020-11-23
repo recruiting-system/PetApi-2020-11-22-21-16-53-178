@@ -9,15 +9,31 @@ using PetApi.Model;
 namespace PetApi.Controllers
 {
     [ApiController]
-    [Route("petStore/[controller]")]
+    [Route("petStore")]
     public class PetsController : ControllerBase
     {
-        private IList<Pet> pets = new List<Pet>();
+        private static IList<Pet> pets = new List<Pet>();
+
         [HttpPost]
+        [Route("pet")]
         public Pet AddPet(Pet pet)
         {
             pets.Add(pet);
             return pet;
+        }
+
+        [HttpGet]
+        [Route("pets")]
+        public IList<Pet> GetAllPets()
+        { 
+            return pets;
+        }
+
+        [HttpDelete]
+        [Route("pets")]
+        public void ClearPets()
+        {
+            pets.Clear();
         }
     }
 }
