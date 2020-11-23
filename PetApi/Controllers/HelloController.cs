@@ -24,7 +24,7 @@ namespace PetApi.Controllers
 
         [HttpGet]
         [Route("pets")]
-        public IList<Pet> GetAllPets()
+        public IList<Pet> GetAllPets([FromQuery] string type)
         { 
             return pets;
         }
@@ -39,12 +39,39 @@ namespace PetApi.Controllers
         [HttpGet("petName/{name}")]
         public ActionResult<Pet> GetPetByName(string name)
         {
-            var pet = pets.First(pet => pet.Name == name);
+            var pet = pets.FirstOrDefault(pet => pet.Name == name);
             if (pet == null)
             {
                 return NotFound();
             }
 
+            return Ok(pet);
+        }
+
+        [HttpDelete("petName/{name}")]
+        public ActionResult DeletePetByName(string name)
+        {
+            var pet = pets.FirstOrDefault(pet => pet.Name == name);
+            if (pet == null)
+            {
+                return NotFound();
+            }
+
+            pets.Remove(pet);
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("pets")]
+        public ActionResult<Pet> UpdatePriceOfPet(PetNamePrice petNamePriceModel)
+        {
+            var pet = pets.FirstOrDefault(pet => pet.Name == petNamePriceModel.Name);
+            if (pet == null)
+            {
+                return NotFound();
+            }
+
+            pet.Price = petNamePriceModel.Price;
             return Ok(pet);
         }
     }

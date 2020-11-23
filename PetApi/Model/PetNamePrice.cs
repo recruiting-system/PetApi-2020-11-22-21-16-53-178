@@ -7,32 +7,22 @@ using System.Threading.Tasks;
 
 namespace PetApi.Model
 {
-    public enum Animal
+    public class PetNamePrice : IEquatable<PetNamePrice> 
     {
-        Dog,
-        Cat
-    }
-
-    public class Pet : IEquatable<Pet> 
-    {
-        public Pet(string name, Animal animal, string color, double price)
+        public PetNamePrice(string name, double price)
         {
             Name = name;
-            Type = animal;
-            Color = color;
             Price = price;
         }
 
-        public Pet()
+        public PetNamePrice()
         { 
         }
 
         public string Name { get; set; }
-        public Animal Type { get; set; }
-        public string Color { get; set; }
         public double Price { get; set; }
 
-        public bool Equals(Pet pet)
+        public bool Equals(PetNamePrice pet)
         {
             if (pet == null || this == null)
             {
@@ -44,7 +34,7 @@ namespace PetApi.Model
                 return false;
             }
 
-            return Name == pet.Name && Type == pet.Type && Color == pet.Color && Price == pet.Price;
+            return Name == pet.Name && Price == pet.Price;
         }
     }
 }

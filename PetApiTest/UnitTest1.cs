@@ -17,7 +17,7 @@ namespace PetApiTest
     public class UnitTest1
     {
         [Fact]
-        public async Task Should_Add_Pet_When_Add_PetAsync()
+        public async Task Should_Add_Pet_When_Add_Pet()
         {
             // given
             TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
@@ -39,7 +39,7 @@ namespace PetApiTest
         }
 
         [Fact]
-        public async Task Should_Return_All_Pets_When_Get_PetsAsync()
+        public async Task Should_Return_All_Pets_When_Get_AllPets()
         {
             // given
             TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
@@ -106,6 +106,104 @@ namespace PetApiTest
 
             // then
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_Return_Not_Found_Given_Pet_Not_Existed_When_Delete_Pet()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/pets");
+            var pet = new Pet("SHISHI", Animal.Dog, "RED", 12);
+            string request = JsonConvert.SerializeObject(pet);
+            var requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("petStore/pet", requestBody);
+
+            // when
+            var urI = "petStore/petName/Tony";
+            var response = await client.DeleteAsync(urI);
+
+            // then
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_Return_No_Content_Given_Pet_Existed_When_Successfully_Delete_Pet()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/pets");
+            var pet = new Pet("SHISHI", Animal.Dog, "RED", 12);
+            string request = JsonConvert.SerializeObject(pet);
+            var requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("petStore/pet", requestBody);
+
+            // when
+            var urI = "petStore/petName/SHISHI";
+            var deleteResponse = await client.DeleteAsync(urI);
+
+            // then
+            Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+
+            var getResponse = await client.GetAsync("petStore/pets");
+            var responseString = await getResponse.Content.ReadAsStringAsync();
+            var actualPet = JsonConvert.DeserializeObject<IList<Pet>>(responseString);
+            Assert.Equal(new List<Pet>(), actualPet);
+        }
+
+        [Fact]
+        public async Task Should_Return_Not_Found_Given_Pet_Not_Existed_When_Update_Pet_Price()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/pets");
+            var pet = new Pet("SHISHI", Animal.Dog, "RED", 12);
+            string request = JsonConvert.SerializeObject(pet);
+            var requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("petStore/pet", requestBody);
+
+            // when
+            var updatedPetNamePrice = new PetNamePrice("Tony", 13);
+            string requestForPatch = JsonConvert.SerializeObject(updatedPetNamePrice);
+            var requestBodyForPatch = new StringContent(requestForPatch, Encoding.UTF8, "application/json");
+
+            var urI = "petStore/pets";
+            var patchResponse = await client.PatchAsync(urI, requestBodyForPatch);
+
+            // then
+            Assert.Equal(HttpStatusCode.NotFound, patchResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_Return_UpdatedPet_Given_Pet_Existed_When_Successfully_Updated_Pet()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/pets");
+            var pet = new Pet("SHISHI", Animal.Dog, "RED", 12);
+            string request = JsonConvert.SerializeObject(pet);
+            var requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("petStore/pet", requestBody);
+
+            // when
+            var updatedPetNamePrice = new PetNamePrice("SHISHI", 13);
+            string requestForPatch = JsonConvert.SerializeObject(updatedPetNamePrice);
+            var requestBodyForPatch = new StringContent(requestForPatch, Encoding.UTF8, "application/json");
+
+            var urI = "petStore/pets";
+            var patchResponse = await client.PatchAsync(urI, requestBodyForPatch);
+
+            // then
+            patchResponse.EnsureSuccessStatusCode();
+
+            var getResponse = await client.GetAsync($"petStore/petName/{updatedPetNamePrice.Name}");
+            var responseString = await getResponse.Content.ReadAsStringAsync();
+            var actualPet = JsonConvert.DeserializeObject<Pet>(responseString);
+            Assert.Equal(updatedPetNamePrice.Price, actualPet.Price);
         }
     }
 }
