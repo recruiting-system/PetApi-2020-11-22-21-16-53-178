@@ -24,7 +24,7 @@ namespace PetApi.Controllers
 
         [HttpGet]
         [Route("pets")]
-        public IList<Pet> GetAllPets([FromQuery] string type)
+        public IList<Pet> GetAllPets()
         { 
             return pets;
         }

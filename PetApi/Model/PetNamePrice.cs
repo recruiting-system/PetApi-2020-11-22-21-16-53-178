@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
+using System;
 
 namespace PetApi.Model
 {
-    public class PetNamePrice : IEquatable<PetNamePrice> 
+    public class PetNamePrice : IEquatable<PetNamePrice>
     {
         public PetNamePrice(string name, double price)
         {
@@ -16,7 +12,7 @@ namespace PetApi.Model
         }
 
         public PetNamePrice()
-        { 
+        {
         }
 
         public string Name { get; set; }
