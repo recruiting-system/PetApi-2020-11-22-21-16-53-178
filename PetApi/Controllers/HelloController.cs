@@ -35,5 +35,17 @@ namespace PetApi.Controllers
         {
             pets.Clear();
         }
+
+        [HttpGet("petName/{name}")]
+        public ActionResult<Pet> GetPetByName(string name)
+        {
+            var pet = pets.First(pet => pet.Name == name);
+            if (pet == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(pet);
+        }
     }
 }
