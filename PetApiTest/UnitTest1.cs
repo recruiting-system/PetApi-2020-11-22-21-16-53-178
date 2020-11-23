@@ -234,5 +234,43 @@ namespace PetApiTest
             var actualPets = JsonConvert.DeserializeObject<IList<Pet>>(responseString);
             Assert.Equal(new List<Pet> { pet1 }, actualPets);
         }
+
+        [Fact]
+        public async Task Should_Return_All_Pets_With_Matching_PriceRange_When_Get_Pet_By_PriceRange()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/pets");
+
+            var pet1 = new Pet("SHISHI", Animal.Dog, "Blue", 5);
+            var pet2 = new Pet("Tony", Animal.Cat, "RED", 12);
+            var pet3 = new Pet("Tony", Animal.Cat, "RED", 13);
+            var pet4 = new Pet("Tony", Animal.Cat, "RED", 14);
+
+            string request1 = JsonConvert.SerializeObject(pet1);
+            string request2 = JsonConvert.SerializeObject(pet2);
+            string request3 = JsonConvert.SerializeObject(pet3);
+            string request4 = JsonConvert.SerializeObject(pet4);
+
+            var requestBody1 = new StringContent(request1, Encoding.UTF8, "application/json");
+            var requestBody2 = new StringContent(request2, Encoding.UTF8, "application/json");
+            var requestBody3 = new StringContent(request3, Encoding.UTF8, "application/json");
+            var requestBody4 = new StringContent(request4, Encoding.UTF8, "application/json");
+
+            await client.PostAsync("petStore/pet", requestBody1);
+            await client.PostAsync("petStore/pet", requestBody2);
+            await client.PostAsync("petStore/pet", requestBody3);
+            await client.PostAsync("petStore/pet", requestBody4);
+
+            // when
+            var response = await client.GetAsync("petStore/pets?maxPrice=13&minPrice=12");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualPets = JsonConvert.DeserializeObject<IList<Pet>>(responseString);
+            Assert.Equal(new List<Pet> { pet2, pet3 }, actualPets);
+        }
     }
 }

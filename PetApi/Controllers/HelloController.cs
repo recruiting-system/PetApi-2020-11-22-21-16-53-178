@@ -24,15 +24,19 @@ namespace PetApi.Controllers
 
         [HttpGet]
         [Route("pets")]
-        public ActionResult<IList<Pet>> GetAllPets([FromQuery] string type)
+        public ActionResult<IList<Pet>> GetAllPets([FromQuery] string type, [FromQuery] double? minPrice, [FromQuery] double? maxPrice)
         {
             var petsCollection = pets;
             if (!string.IsNullOrEmpty(type))
             {
-                var str = pets[0].Type.ToString();
                 petsCollection = petsCollection.Where(pet => pet.Type.ToString() == type).ToList();
             }
-          
+
+            if (minPrice != null && maxPrice != null)
+            {
+                petsCollection = petsCollection.Where(pet => pet.Price >= minPrice && pet.Price <= maxPrice).ToList();
+            }
+
             return Ok(petsCollection);
         }
 
