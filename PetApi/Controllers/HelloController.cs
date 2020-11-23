@@ -4,17 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PetApi.Model;
 
 namespace PetApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class HelloController : ControllerBase
+    [Route("petStore/[controller]")]
+    public class PetsController : ControllerBase
     {
-        [HttpGet]
-        public string Get()
+        private IList<Pet> pets = new List<Pet>();
+        [HttpPost]
+        public Pet AddPet(Pet pet)
         {
-            return "Hello World";
+            pets.Add(pet);
+            return pet;
         }
     }
 }
