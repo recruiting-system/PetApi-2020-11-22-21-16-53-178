@@ -11,6 +11,10 @@ namespace PetApi.Controllers
     {
         private static IList<Pet> pets = new List<Pet>();
 
+        //I know we should only consider the happy path today. 
+        //When I asked what to do if cannot find the pet need to be delete
+        //The teacher told me that its ok to include Action Result as return. 
+        //So I decide to add them. Hope it is not over design~...
         [HttpPost]
         [Route("pet")]
         public ActionResult<Pet> AddPet(Pet pet)
