@@ -24,9 +24,16 @@ namespace PetApi.Controllers
 
         [HttpGet]
         [Route("pets")]
-        public IList<Pet> GetAllPets()
-        { 
-            return pets;
+        public ActionResult<IList<Pet>> GetAllPets([FromQuery] string type)
+        {
+            var petsCollection = pets;
+            if (!string.IsNullOrEmpty(type))
+            {
+                var str = pets[0].Type.ToString();
+                petsCollection = petsCollection.Where(pet => pet.Type.ToString() == type).ToList();
+            }
+          
+            return Ok(petsCollection);
         }
 
         [HttpDelete]
