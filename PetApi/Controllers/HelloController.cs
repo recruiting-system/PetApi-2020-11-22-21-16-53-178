@@ -15,7 +15,7 @@ namespace PetApi.Controllers
         [Route("pet")]
         public ActionResult<Pet> AddPet(Pet pet)
         {
-            if (pets.FirstOrDefault(pet => pet.Name == pet.Name) == null)
+            if (pets.FirstOrDefault(petInStore => petInStore.Name == pet.Name) != null)
             {
                 return Conflict(pet);
             }

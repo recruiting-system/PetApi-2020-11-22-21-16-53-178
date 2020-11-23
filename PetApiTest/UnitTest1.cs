@@ -264,8 +264,8 @@ namespace PetApiTest
 
             var pet1 = new Pet("SHISHI", Animal.Dog, "Blue", 5);
             var pet2 = new Pet("Tony", Animal.Cat, "RED", 12);
-            var pet3 = new Pet("Tony", Animal.Cat, "RED", 13);
-            var pet4 = new Pet("Tony", Animal.Cat, "RED", 14);
+            var pet3 = new Pet("Tom", Animal.Cat, "RED", 13);
+            var pet4 = new Pet("Jerry", Animal.Cat, "RED", 14);
 
             string request1 = JsonConvert.SerializeObject(pet1);
             string request2 = JsonConvert.SerializeObject(pet2);
