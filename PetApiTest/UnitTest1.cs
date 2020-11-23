@@ -272,5 +272,34 @@ namespace PetApiTest
             var actualPets = JsonConvert.DeserializeObject<IList<Pet>>(responseString);
             Assert.Equal(new List<Pet> { pet2, pet3 }, actualPets);
         }
+
+        [Fact]
+        public async Task Should_Return_All_Pets_With_Matching_Color_When_Get_Pet_By_Color()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/pets");
+
+            var pet1 = new Pet("SHISHI", Animal.Dog, "Blue", 12);
+            var pet2 = new Pet("Tony", Animal.Cat, "RED", 12);
+            string request1 = JsonConvert.SerializeObject(pet1);
+            string request2 = JsonConvert.SerializeObject(pet2);
+
+            var requestBody1 = new StringContent(request1, Encoding.UTF8, "application/json");
+            var requestBody2 = new StringContent(request2, Encoding.UTF8, "application/json");
+
+            await client.PostAsync("petStore/pet", requestBody1);
+            await client.PostAsync("petStore/pet", requestBody2);
+
+            // when
+            var response = await client.GetAsync("petStore/pets?color=Blue");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualPets = JsonConvert.DeserializeObject<IList<Pet>>(responseString);
+            Assert.Equal(new List<Pet> { pet1 }, actualPets);
+        }
     }
 }
