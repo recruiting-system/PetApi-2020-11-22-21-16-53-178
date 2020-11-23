@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using PetApi.Model;
 
 namespace PetApi.Controllers
@@ -16,10 +13,15 @@ namespace PetApi.Controllers
 
         [HttpPost]
         [Route("pet")]
-        public Pet AddPet(Pet pet)
+        public ActionResult<Pet> AddPet(Pet pet)
         {
+            if (pets.FirstOrDefault(pet => pet.Name == pet.Name) == null)
+            {
+                return Conflict(pet);
+            }
+
             pets.Add(pet);
-            return pet;
+            return Ok(pet);
         }
 
         [HttpGet]

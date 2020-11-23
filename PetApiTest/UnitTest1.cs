@@ -39,6 +39,25 @@ namespace PetApiTest
         }
 
         [Fact]
+        public async Task Should_Return_Conflict_Given_Name_Already_Existed_When_Add_Pet()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/pets");
+            var pet = new Pet("SIHSHI", Animal.Dog, "RED", 12);
+            string request = JsonConvert.SerializeObject(pet);
+            var requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("petStore/pet", requestBody);
+
+            // when
+            var response = await client.PostAsync("petStore/pet", requestBody);
+
+            // then
+            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        }
+
+        [Fact]
         public async Task Should_Return_All_Pets_When_Get_AllPets()
         {
             // given
